@@ -92,6 +92,7 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
+            // 重定向到上次退出登录页面 或者 到根路径页面
             this.$router.push({ path: this.redirect || '/' })
           }).catch(() => {
             this.loading = false
