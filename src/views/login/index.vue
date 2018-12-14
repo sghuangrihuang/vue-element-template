@@ -23,6 +23,20 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
+      <!-- <el-form-item prop="vericode">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          v-model="loginForm.vericode"
+          name="vericode"
+          auto-complete="on"
+          placeholder="vericode"
+          @keyup.enter.native="handleLogin" />
+        <span class="show-pwd" @click="showPwd">
+          <svg-icon icon-class="eye" />
+        </span>
+      </el-form-item> -->
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           Sign in
@@ -31,6 +45,10 @@
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: admin</span>
+      </div>
+      <div class="tips">
+        <span style="margin-right:20px;">username: editor</span>
+        <span> password: editor</span>
       </div>
     </el-form>
   </div>
@@ -56,14 +74,23 @@ export default {
         callback()
       }
     }
+    const validateCode = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('验证码不得少于4位'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: 'admin',
-        password: 'admin'
+        password: 'admin',
+        vericode: 'admin'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
+        password: [{ required: true, trigger: 'blur', validator: validatePass }],
+        vericode: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       loading: false,
       pwdType: 'password',
@@ -92,8 +119,12 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then(() => {
             this.loading = false
+
             // 重定向到上次退出登录页面 或者 到根路径页面
-            this.$router.push({ path: this.redirect || '/' })
+            // this.$router.push({ path: this.redirect || '/' })
+
+            // 针对不同权限 无需跳转原来页面
+            this.$router.push({ path: '/' })
           }).catch(() => {
             this.loading = false
           })

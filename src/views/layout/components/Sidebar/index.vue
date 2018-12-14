@@ -22,12 +22,23 @@ export default {
   components: { SidebarItem },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar',
+      'roles'
     ]),
     routes() {
-      return this.$router.options.routes
+      const currentRole = this.roles[0]
+      const routes = this.$router.options.routes
+      const premissRoutes = routes.filter((item) => {
+        if (item.meta && item.meta.roles && item.meta.roles.length) {
+          return item.meta.roles.indexOf(currentRole) !== -1
+        }
+        return true
+      })
+      return premissRoutes
     },
+    // 折叠Flag, sidebar关闭则折叠，开启则不折叠。
     isCollapse() {
+      // sidebar开关
       return !this.sidebar.opened
     }
   }

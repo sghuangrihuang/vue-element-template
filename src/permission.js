@@ -5,6 +5,13 @@ import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth' // 验权
 
+function hasPermission(roles, route) {
+  if (route.meta && route.meta.roles) {
+    return roles.some(role => route.meta.roles.includes(role))
+  }
+  return true
+}
+
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -18,10 +25,26 @@ router.beforeEach((to, from, next) => {
     } else {
       // 判断是否权限
       if (store.getters.roles.length === 0) {
-        // 无权限
         store.dispatch('GetInfo').then(res => {
           // 拉取用户信息
-          next()
+          var currentRole = res.data.roles
+          if (hasPermission(currentRole, to)) {
+            next()
+          } else {
+            next('/401')
+          }
+          // 是否有权限限制
+          // if (to.meta && to.meta.roles) {
+          //   if (to.meta.roles.indexOf(currentRole) !== -1) {
+          //     // 有权限登入
+          //     next()
+          //   } else {
+          //     // 无权限登入
+          //     next('/401')
+          //   }
+          // } else {
+          //   next()
+          // }
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again')
@@ -29,8 +52,24 @@ router.beforeEach((to, from, next) => {
           })
         })
       } else {
-        // 允许跳转
-        next()
+        var currentRole = store.getters.roles
+        if (hasPermission(currentRole, to)) {
+          next()
+        } else {
+          next('/401')
+        }
+        // 是否有权限限制
+        // if (to.meta && to.meta.roles) {
+        //   if (to.meta.roles.indexOf(currentRole) !== -1) {
+        //     // 有权限登入
+        //     next()
+        //   } else {
+        //     // 无权限登入
+        //     next('/401')
+        //   }
+        // } else {
+        //   next()
+        // }
       }
     }
   } else {

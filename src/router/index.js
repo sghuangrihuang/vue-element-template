@@ -7,7 +7,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '../views/layout/Layout'
+import Layout from '@/views/layout/Layout'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -24,16 +24,18 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
+  { path: '/401', component: () => import('@/views/401'), hidden: true },
 
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
+    redirect: '/homepage',
+    name: 'Homepage',
+    meta: { icon: 'example' },
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      path: 'homepage',
+      meta: { title: 'home', icon: 'home' },
+      component: () => import('@/views/homepage/index')
     }]
   },
 
@@ -62,12 +64,13 @@ export const constantRouterMap = [
   {
     path: '/form',
     component: Layout,
+    meta: { roles: ['editor', 'admin'] },
     children: [
       {
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: 'Form', icon: 'form', roles: ['editor', 'admin'] }
       }
     ]
   },
@@ -79,38 +82,39 @@ export const constantRouterMap = [
     name: 'Nested',
     meta: {
       title: 'Nested',
-      icon: 'nested'
+      icon: 'nested',
+      roles: ['admin']
     },
     children: [
       {
         path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        component: () => import('@/views/nested/menu1/index'),
         name: 'Menu1',
-        meta: { title: 'Menu1' },
+        meta: { title: 'Menu1', roles: ['admin'] },
         children: [
           {
             path: 'menu1-1',
             component: () => import('@/views/nested/menu1/menu1-1'),
             name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
+            meta: { title: 'Menu1-1', roles: ['admin'] }
           },
           {
             path: 'menu1-2',
             component: () => import('@/views/nested/menu1/menu1-2'),
             name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
+            meta: { title: 'Menu1-2', roles: ['admin'] },
             children: [
               {
                 path: 'menu1-2-1',
                 component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
                 name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
+                meta: { title: 'Menu1-2-1', roles: ['admin'] }
               },
               {
                 path: 'menu1-2-2',
                 component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
                 name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
+                meta: { title: 'Menu1-2-2', roles: ['admin'] }
               }
             ]
           },
@@ -118,14 +122,14 @@ export const constantRouterMap = [
             path: 'menu1-3',
             component: () => import('@/views/nested/menu1/menu1-3'),
             name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
+            meta: { title: 'Menu1-3', roles: ['admin'] }
           }
         ]
       },
       {
         path: 'menu2',
         component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        meta: { title: 'menu2', roles: ['admin'] }
       }
     ]
   },
